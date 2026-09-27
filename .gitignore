@@ -1,0 +1,8 @@
+# Legacy local player and cloud registration are not part of this extension.
+dist/
+.openai/
+start-signage.ps1
+make-icons.ps1
+*.zip
+.env*
+node_modules/
