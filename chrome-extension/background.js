@@ -1,21 +1,8 @@
-importScripts('overlay.js');
+importScripts('overlay.js','site-access.js');
 const URLS = [];
 const DEMO_URLS=['operations','welcome','schedule'].map(page=>chrome.runtime.getURL('demo.html#'+page));
 const ALARM = 'signage-rotate';
 const REFRESH = 'signage-refresh';
-function overlayOrigins(urls) {
-  const patterns=new Set();
-  for(const value of urls) {
-    const u=new URL(value);if(!['http:','https:'].includes(u.protocol))continue;
-    const hosts=[u.hostname];
-    // Only add the standard aliases for these known redirecting sites.
-    if(['google.com','www.google.com','youtube.com','www.youtube.com'].includes(u.hostname)) {
-      const base=u.hostname.replace(/^www\./,'');hosts.push(base,'www.'+base);
-    }
-    for(const host of hosts) for(const scheme of (u.protocol==='http:'?['http:','https:']:[u.protocol])) patterns.add(scheme+'//'+host+'/*');
-  }
-  return [...patterns];
-}
 async function settings() { return {urls:URLS,names:[],seconds:60,reloadMinutes:0,accent:'#005bdb',showTimer:true,transitions:true,...(await chrome.storage.local.get('settings')).settings}; }
 function validate(c) {
   if(!Array.isArray(c.urls) || c.urls.length>50) throw Error('Use up to 50 pages.');
@@ -88,9 +75,14 @@ async function command(message) {
     }
     case 'settings': return await settings();
     case 'overlayAccess': {
-      const origins=overlayOrigins((await settings()).urls);
+      const prefs=await settings();
+      const origins=overlayOrigins(prefs.urls);
       const errors=(await chrome.storage.session.get('overlayErrors')).overlayErrors||{};
-      return {origins,granted:origins.length?await chrome.permissions.contains({origins}):true,error:errors[s.tabIds[s.index]]||''};
+      const missing=[];
+      for(let i=0;i<prefs.urls.length;i++) {
+        if(!await chrome.permissions.contains({origins:overlayOrigins([prefs.urls[i]])})) missing.push({page:i+1,name:prefs.names?.[i]||new URL(prefs.urls[i]).hostname});
+      }
+      return {origins,granted:!missing.length,missing,error:errors[s.tabIds[s.index]]||''};
     }
     case 'visuals':
       if(s.running||s.paused) {
@@ -160,6 +152,18 @@ chrome.alarms.onAlarm.addListener(a=>{
   }).catch(async e=>{console.error(e);await stop(await state());});
 });
 chrome.tabs.onRemoved.addListener(id=>{serial(async()=>{const s=await state();if(s.tabIds.includes(id)) await stop(s);}).catch(console.error);});
+// Chrome fires this for both user clicks and our own tab switches. Only
+// user-selected changes need a new countdown; our switches already saved it.
+chrome.tabs.onActivated.addListener(({tabId,windowId})=>{
+  serial(async()=>{
+    const s=await state();const index=s.tabIds.indexOf(tabId);
+    if(windowId!==s.windowId||index<0||(!s.running&&!s.paused)||index===s.index)return;
+    const old=s.tabIds[s.index];s.index=index;s.remaining=s.seconds*1000;
+    if(s.running)await schedule(s);else await save(s);
+    await overlay({...s,running:false,paused:false},old);
+    await overlay(s,tabId,true);
+  }).catch(console.error);
+});
 chrome.tabs.onUpdated.addListener((id,change)=>{
   if(change.status==='complete') serial(async()=>{const s=await state();if((s.running||s.paused) && s.tabIds[s.index]===id) await overlay(s,id);}).catch(console.error);
 });

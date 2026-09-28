@@ -1,42 +1,64 @@
-# Install once in your logged-in Chrome profile
+# Install and use ScreenLoop Signage
 
-## Guided setup and playback remote (1.5)
+## Install
 
-Reload the extension. New users see Set up my pages and Try demo. Setup opens in its own tab: enter a URL and optional name, open the page, sign in if needed, return and click Page is ready. Add more pages or choose Save setup / Save & start. Draft progress is stored locally, including unfinished URL entry. Login readiness is confirmed by you; the extension does not inspect authentication.
+1. Use Chrome 120 or later, in the profile where you log in to your dashboards.
+2. Download or clone the repository. Open `chrome://extensions`, turn on Developer mode, and choose Load unpacked.
+3. Select the repository's `chrome-extension` folder.
+4. Open ScreenLoop Signage from Chrome's Extensions menu. Pin it for easy access.
+5. Choose Set up my pages or Try demo.
 
-Existing saved playlists go straight to the remote. The dropdown shows page name, position, play/pause, previous/next, fullscreen, and time per page. Manage pages opens the guided flow again. All settings contains reload interval, accent, countdown visibility, fade preference, demo, and optional site-access controls.
+ScreenLoop opens normal browser tabs in a dedicated window using that Chrome profile's login sessions. No localhost server, iframe embedding, or dashboard API is needed.
 
-## ScreenLoop Signage: on-screen controls (1.4)
+## Set up your playlist
 
-Reload the extension in chrome://extensions. The new name and blue screen/loop icon appear in Chrome's extensions menu; pin it to show the icon on the toolbar. Enable countdown & fade for your playlist sites to also enable on-screen controls. Demo pages need no permission.
+1. Enter a website URL and optional page name, then click Open & check page.
+2. Sign in on the website if necessary. Return to setup and click Page is ready. This is your confirmation; ScreenLoop does not detect login status or read credentials.
+3. Approve Chrome's optional site-access request for the timer and floating controls. Declining still adds the page and permits rotation without overlays.
+4. Add more pages, reorder or remove entries, and choose Time per page.
+5. Choose Save setup or Save & start.
 
-Use the bottom-center Controls handle to show Previous, Pause/Play, Next, and Fullscreen. Hovering near the bottom center also reveals the strip. It hides after three seconds when playing, stays open when paused, and preserves the remaining countdown on Play. Previous/Next reset the interval. Pause stops auto-refresh too. Refresh a dashboard after updating/disabling the extension to remove an old injected overlay. Chrome may delay alarm delivery, especially after sleep or when resuming with less than 30 seconds remaining.
+Setup drafts save automatically on this device, including unfinished URL entry. Playlists support up to 50 HTTP or HTTPS URLs without embedded usernames/passwords. Saving stops current playback; existing display windows stay open. Start playback again after saving. A changed playlist opens a new display window when needed, leaving the old one open.
 
-## Demo and accent color (1.3)
+Manage pages reopens setup. Existing pages without permission show Enable timer & controls; you do not need to remove and re-add them. Already-granted access does not require another approval.
 
-Reload ScreenLoop Signage at chrome://extensions to apply this update. Click **Play demo signage** to open three fictional demo pages that rotate every 30 seconds. No login, internet connection, or optional website permission is needed for the bundled demo. Your saved playlist is not replaced. Click **Open dashboards / sign in**, then Start, to return to your own pages.
+## Playback and settings
 
-In **Manage pages & reload**, choose **Timer accent color**, save, and restart playback. New installations start with an empty playlist. Previously saved playlists are preserved. Private addresses formerly hardcoded as defaults are no longer bundled; if you never saved a playlist, add your URLs in Manage pages once.
+After setup, the dropdown shows the current page name and position, Previous, Play/Pause, Next, Toggle fullscreen, and Time per page. Manage pages edits your playlist; All settings opens the complete preferences.
 
-This is a publication-preparation build, not a submitted store release. Before submission, add store icons/screenshots and a publisher support contact, host the privacy policy, complete the store disclosures, and perform real Chrome acceptance testing.
+- Rotation intervals: 30 seconds, 1 minute, 2 minutes, or 5 minutes.
+- Automatic reload: off by default, or every 1, 5, 10, 15, 30, or 60 minutes. It reloads every managed page, including the active page, only while playing.
+- Timer accent color: defaults to logo blue `#005bdb`.
+- Show countdown bar and Fade on page switches control the visual effects.
+- Save settings stops playback. Restart from the dropdown afterward.
 
-## Countdown bar and transitions (1.2)
+The right-edge bar drains without a numeric countdown. The bottom-center Controls handle reveals Previous, Pause/Play, Next, and Fullscreen; hovering near the bottom center also reveals the strip. Controls hide after three seconds while playing and stay open while paused. Pause freezes the bar and stops automatic reload; Play resumes the remaining countdown. Previous/Next or manually selecting another managed tab resets its countdown, including while paused.
 
-Reload the extension in chrome://extensions. In the popup click **Enable countdown & fade** and approve Chrome's site-access prompt for your playlist sites. Start rotation: a slim blue bar on the right drains toward the bottom, and each incoming page briefly fades in. There is no numeric countdown. The bar is click-through, hides when paused, and resynchronizes after reload. Next resets the interval. Reduced-motion preferences disable the transition. Chrome switches tabs directly, so this is an incoming overlay fade, not a crossfade between two page images.
+The transition is a brief incoming overlay fade, not a crossfade between screenshots. Reduced-motion preferences disable it. Overlays are added only to active managed playlist tabs, not unrelated browsing tabs.
 
-After adding a new website, click Enable countdown & fade again to grant access to that site. Permission is optional; rotation still works if declined. Overlays are injected only into the active managed playlist tab, not other browsing tabs. Chrome's host permission grants page access even though this code only adds its own overlay; it does not collect page content or credentials. Host permissions cover the site's host, including other ports. Redirects to an unapproved host won't show the overlay.
+Closing a managed tab stops rotation. Pausing leaves tabs open. After restarting Chrome, start playback from the extension again. Chrome alarms may run late after sleep or background throttling, especially when resuming with less than 30 seconds remaining.
 
-## Updating an existing installation
+## Try the demo
 
-Open chrome://extensions and click Reload on ScreenLoop Signage. Open its popup and choose **Manage pages & reload**. Add, remove, or move URLs up/down; select a reload interval (off by default) and save. Saving pauses playback. Start again from the popup. If the playlist changed, a new display window opens and the old one is left untouched. Settings survive browser restarts. Auto-reload only runs while playing and reloads every managed page, including the active one.
+Try demo on the welcome screen or Play demo signage in All settings opens three bundled fictional pages, initially rotating every 30 seconds. They require no login, internet connection, or optional website access. Your saved playlist is not replaced. To return to your pages, open Manage pages and choose Save & start.
 
-1. Open chrome://extensions in Chrome.
-2. Turn on Developer mode, choose Load unpacked, and select this folder:
-   C:\Users\BirajGuatam\Documents\Codex\Project1\signage\chrome-extension
-3. Open ScreenLoop Signage from Chrome's Extensions (puzzle) menu; pin it for easy access.
-4. Click Open dashboards / sign in. A dedicated normal Chrome window opens both pages using this profile's sessions. Complete any login directly on the service page.
-5. Open the extension again and click Start / resume rotation. Use Toggle fullscreen or F11.
+## Site access and missing controls
 
-This replaces the iframe player. No localhost server is needed. It does not read passwords, cookies, dashboard content, or browsing history. It uses alarms, device-local extension storage, scripting, and optional site access for the overlays. It controls only the playlist tabs it creates. Pausing leaves tabs open. Closing a managed tab stops rotation. After restarting Chrome, start from the extension again.
+Website access is optional for rotation, but required for the countdown, floating controls, and fade on normal websites. All settings also offers Enable on-screen controls & visuals for the saved playlist. Chrome grants access at the host level, including other ports; it is not limited to a single dashboard path. You can revoke access in Chrome's extension settings.
 
-Rotation uses Chrome alarms and may be delayed if the computer sleeps or Chrome throttles background work.
+If a page has no timer or controls:
+
+1. Open the dropdown and check for missing site access or an injection error for the active page.
+2. Open Manage pages and use Enable timer & controls for affected entries, approve Chrome's prompt, and restart playback.
+3. If the website redirects to another host, save its final URL and grant access there. Google/YouTube base and www aliases, and HTTP-to-HTTPS upgrades, are included in permission requests; arbitrary redirect hosts are not.
+4. Check that Show countdown bar is enabled if only the bar is missing. Chrome-restricted pages cannot accept injected overlays.
+
+Permission is independent of login: being signed in does not authorize ScreenLoop to draw controls. Login must also be in the Chrome profile running ScreenLoop, not another browser or profile.
+
+## Update an unpacked installation
+
+Reload ScreenLoop Signage at `chrome://extensions`, then restart playback. Refresh existing dashboard tabs to remove old injected overlays after updating or disabling the extension. Saved settings remain local across browser restarts.
+
+## Publication status
+
+This is not a published Chrome Web Store release. Icons are bundled. Store screenshots, publisher/support details, a publicly hosted privacy policy, disclosures, and live Chrome acceptance testing are still needed before submission. See [PRIVACY.md](PRIVACY.md) for the draft policy and the repository README for automated test commands.

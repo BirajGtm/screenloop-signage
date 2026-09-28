@@ -3,8 +3,10 @@ let data={},handler,now=100000,fullscreen=false;
 const hook={addListener(){}},alarms=new Map(),shots=[];
 const chrome={runtime:{getURL:p=>'chrome-extension://test/'+p,onMessage:{addListener:f=>handler=f},onStartup:hook},storage:{local:{get:async()=>({})},session:{get:async()=>data,set:async v=>{data=v}}},action:{setBadgeText:async()=>{}},alarms:{clear:async n=>alarms.delete(n),create:async(n,v)=>alarms.set(n,v),onAlarm:hook},tabs:{get:async id=>({id,windowId:7}),update:async()=>{},sendMessage:async(id,m)=>shots.push(m.info),onRemoved:hook,onUpdated:hook},windows:{create:async()=>({id:7,tabs:[{id:1},{id:2},{id:3}]}),update:async(id,v)=>{if(v.state)fullscreen=v.state==='fullscreen'},get:async()=>({state:fullscreen?'fullscreen':'normal'})}};
 chrome.storage.session.set=async v=>Object.assign(data,v);
+chrome.tabs.onActivated=hook;
 const context={chrome,console,URL,Date:{now:()=>now},importScripts(){}};
 vm.createContext(context);
+vm.runInContext(fs.readFileSync(__dirname+'/chrome-extension/site-access.js','utf8'),context);
 vm.runInContext(fs.readFileSync(__dirname+'/chrome-extension/background.js','utf8'),context);
 const send=(m,id)=>new Promise(resolve=>handler(m,id?{tab:{id}}:{},resolve));
 (async()=>{

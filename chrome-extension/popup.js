@@ -14,7 +14,7 @@ async function refresh(){
  [player,prefs]=await Promise.all([call('status'),call('settings')]);
  access=await call('overlayAccess');
  accessButton.hidden=player.demo||!access.origins.length||(access.granted&&!access.error);
- accessNote.textContent=player.demo?'':access.error||(!access.granted?'Allow your playlist sites to display the timer and controls.':'');
+ accessNote.textContent=player.demo?'':access.error||(!access.granted?'Site access needed: '+access.missing.map(p=>'page '+p.page+' ('+p.name+')').join(', ')+'. Enable access below to show the timer and controls.':'');
  const show=Boolean(prefs.urls.length||player.running||player.paused);el('welcome').hidden=show;el('remote').hidden=!show;el('own').hidden=prefs.urls.length>0;
  el('seconds').value=String(player.running||player.paused?player.seconds:prefs.seconds);el('play').textContent=player.running?'Pause':player.paused?'Resume':'Play';
  const name=player.demo?['Operations','Welcome','Schedule'][player.index]:prefs.names?.[player.index]||prefs.urls[player.index]||'';
