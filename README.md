@@ -31,6 +31,10 @@ After changing source files, reload the extension at `chrome://extensions`.
 
 No localhost server or dashboard API is needed. Use the Chrome profile where you sign in to your websites. Declining site access allows rotation without overlays on that site.
 
+## Logo assets
+
+The untouched full-size logo is [Logo Main.png](Logo%20Main.png) in the repository root. Packaged extension icons are generated from it at 16, 32, 48, and 128 pixels. On Windows, run `powershell -File build-icons.ps1` to regenerate them. The full-size original is not included in the extension folder.
+
 ## Checks
 
 Run with Node.js:
