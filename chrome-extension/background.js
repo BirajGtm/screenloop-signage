@@ -3,24 +3,25 @@ const URLS = [];
 const DEMO_URLS=['operations','welcome','schedule'].map(page=>chrome.runtime.getURL('demo.html#'+page));
 const ALARM = 'signage-rotate';
 const REFRESH = 'signage-refresh';
-async function settings() { return {urls:URLS,names:[],seconds:60,reloadMinutes:0,accent:'#005bdb',showTimer:true,transitions:true,...(await chrome.storage.local.get('settings')).settings}; }
+async function settings() { return {urls:URLS,names:[],seconds:30,durations:[],reloadMinutes:0,accent:'#005bdb',showTimer:true,transitions:true,...(await chrome.storage.local.get('settings')).settings}; }
+function validDuration(n){return Number.isInteger(n)&&n>=30&&n<=600;}
 function validate(c) {
   if(!Array.isArray(c.urls) || c.urls.length>50) throw Error('Use up to 50 pages.');
   const urls=c.urls.map(value=>{ const u=new URL(value); if(!['http:','https:'].includes(u.protocol) || u.username || u.password) throw Error('Use HTTP or HTTPS URLs without embedded passwords.'); return u.href; });
-  if(![30,60,120,300].includes(c.seconds) || ![0,1,5,10,15,30,60].includes(c.reloadMinutes)) throw Error('Choose a valid interval.');
+  if(!validDuration(c.seconds) || ![0,1,5,10,15,30,60].includes(c.reloadMinutes)) throw Error('Choose a valid interval.');
   if(!/^#[0-9a-f]{6}$/i.test(c.accent)) throw Error('Choose a valid accent color.');
-  return {urls,names:urls.map((u,i)=>String(c.names?.[i]||'').slice(0,100)),seconds:c.seconds,reloadMinutes:c.reloadMinutes,accent:c.accent,showTimer:c.showTimer!==false,transitions:c.transitions!==false};
+  return {urls,names:urls.map((u,i)=>String(c.names?.[i]||'').slice(0,100)),durations:urls.map((u,i)=>{const n=c.durations?.[i]??c.seconds;if(!validDuration(n))throw Error('Use a whole number of seconds from 30 to 600.');return n;}),seconds:30,reloadMinutes:c.reloadMinutes,accent:c.accent,showTimer:c.showTimer!==false,transitions:c.transitions!==false};
 }
 let queue = Promise.resolve();
 function serial(work) { const job = queue.then(work); queue = job.catch(() => {}); return job; }
-async function state() { return (await chrome.storage.session.get('player')).player || {running:false,seconds:60,index:0,tabIds:[]}; }
+async function state() { return (await chrome.storage.session.get('player')).player || {running:false,seconds:30,index:0,tabIds:[]}; }
 async function save(s) {
   await chrome.storage.session.set({player:s});
   await chrome.action.setBadgeText({text:s.running?'ON':''});
 }
 async function overlay(s,id,enter=false) {
   const prefs=await settings();
-  const info={running:s.running,visible:s.running||s.paused,remaining:s.remaining,seconds:s.seconds,deadline:s.deadline,enter:enter&&prefs.transitions,showTimer:prefs.showTimer,accent:prefs.accent};
+  const info={running:s.running,visible:s.running||s.paused,remaining:s.remaining,seconds:s.seconds,deadline:s.deadline,enter:enter&&prefs.transitions,showTimer:prefs.showTimer,singlePage:s.tabIds.length===1,accent:prefs.accent};
   try {
     if(s.demo) await chrome.tabs.sendMessage(id,{type:'signageOverlay',info});
     else await chrome.scripting.executeScript({target:{tabId:id},func:renderSignageOverlay,args:[info]});
@@ -34,14 +35,17 @@ async function overlay(s,id,enter=false) {
   }
 }
 async function schedule(s,duration=s.seconds*1000) {
+  if(s.tabIds.length<2){await chrome.alarms.clear(ALARM);s.deadline=0;await save(s);return;}
   s.deadline=Date.now()+duration;
   await chrome.alarms.create(ALARM,{when:s.deadline});
   await save(s);
 }
+async function pageSeconds(s){const c=await settings();return s.demo?30:(c.durations?.[s.index]??c.seconds??30);}
 async function advance(s,direction=1) {
+  if(s.tabIds.length<2)return;
   const old=s.tabIds[s.index];
   s.index=(s.index+direction+s.tabIds.length)%s.tabIds.length;
-  s.remaining=s.seconds*1000;
+  s.seconds=await pageSeconds(s);s.remaining=s.seconds*1000;
   await chrome.tabs.update(s.tabIds[s.index],{active:true});
   if(s.running) await schedule(s); else await save(s);
   if(old!==s.tabIds[s.index]) await overlay({...s,running:false,paused:false},old);
@@ -60,6 +64,8 @@ async function prepare(s,demo=false) {
   const urls=demo?DEMO_URLS:c.urls;
   if(!urls.length) throw Error('Add pages in Manage pages, or choose Play demo signage.');
   const w=await chrome.windows.create({url:urls,focused:true,type:'normal'});
+  const launched=(await chrome.storage.session.get('launchedTabIds')).launchedTabIds||[];
+  await chrome.storage.session.set({launchedTabIds:[...new Set([...launched,...s.tabIds,...w.tabs.map(t=>t.id)])]});
   s.windowId=w.id; s.tabIds=w.tabs.map(t=>t.id); s.index=0; s.urls=urls; s.demo=demo;
   return s;
 }
@@ -67,11 +73,31 @@ async function command(message) {
   let s=await state();
   switch(message.action) {
     case 'status': return s;
+    case 'stop': {
+      await stop(s);
+      const launched=(await chrome.storage.session.get('launchedTabIds')).launchedTabIds||[];
+      const ids=[...new Set([...launched,...s.tabIds])],failed=[];
+      for(const id of ids) {
+        try { await chrome.tabs.get(id); } catch { continue; }
+        try { await chrome.tabs.remove(id); } catch { failed.push(id); }
+      }
+      s={running:false,paused:false,seconds:(await settings()).seconds,index:0,tabIds:[]};
+      await save(s);
+      await chrome.storage.session.set({launchedTabIds:failed,overlayErrors:{}});
+      if(failed.length) throw Error('Playback stopped, but some tabs could not close. Try Stop again.');
+      break;
+    }
     case 'setInterval': {
-      const seconds=Number(message.seconds);if(![30,60,120,300].includes(seconds)) throw Error('Invalid interval.');
-      await chrome.storage.local.set({settings:{...await settings(),seconds}});
+      const seconds=Number(message.seconds);if(!validDuration(seconds)) throw Error('Invalid interval.');
+      if(!s.running&&!s.paused)throw Error('Start playback to change the current page duration.');
+      if(!s.demo){const c=await settings();const durations=c.urls.map((u,i)=>c.durations?.[i]??c.seconds??30);durations[s.index]=seconds;await chrome.storage.local.set({settings:{...c,durations}});}
       s.seconds=seconds;s.remaining=seconds*1000;if(s.running) await schedule(s);else await save(s);
       if(s.tabIds.length) await overlay(s,s.tabIds[s.index]);return s;
+    }
+    case 'resetSettings': {
+      await stop(s);const c=await settings();
+      const defaults={...c,seconds:30,durations:c.urls.map(()=>30),reloadMinutes:0,accent:'#005bdb',showTimer:true,transitions:true};
+      await chrome.storage.local.set({settings:defaults});await chrome.storage.local.remove('setupDraft');return defaults;
     }
     case 'settings': return await settings();
     case 'overlayAccess': {
@@ -100,8 +126,7 @@ async function command(message) {
     case 'demo':
     case 'start':
       await stop(s);
-      s=await prepare(s,message.action==='demo'); s.seconds=message.action==='demo'?30:([30,60,120,300].includes(Number(message.seconds))?Number(message.seconds):(await settings()).seconds);
-      if(!s.demo) await chrome.storage.local.set({settings:{...await settings(),seconds:s.seconds}});
+      s=await prepare(s,message.action==='demo'); s.seconds=await pageSeconds(s);
       s.running=true; s.paused=false; await chrome.tabs.update(s.tabIds[s.index],{active:true});
       await chrome.windows.update(s.windowId,{focused:true}); await save(s);
       await schedule(s); await overlay(s,s.tabIds[s.index],true);
@@ -110,7 +135,7 @@ async function command(message) {
       break;
     case 'pause':
       if(!await valid(s)) {await stop(s);break;}
-      if(s.running) s.remaining=Math.max(0,s.deadline-Date.now());
+      if(s.running) s.remaining=s.tabIds.length>1?Math.max(0,s.deadline-Date.now()):s.seconds*1000;
       await chrome.alarms.clear(ALARM);await chrome.alarms.clear(REFRESH);
       s.running=false;s.paused=true;await save(s);await overlay(s,s.tabIds[s.index]);break;
     case 'resume':
@@ -134,7 +159,7 @@ chrome.runtime.onMessage.addListener((m,sender,reply)=>{
   if(m.action==='overlayControl') {
     serial(async()=>{
       const s=await state();
-      if(sender.tab?.id!==s.tabIds[s.index] || !['previous','next','pause','resume','fullscreen'].includes(m.control)) throw Error('Inactive player control.');
+      if(sender.tab?.id!==s.tabIds[s.index] || !['previous','next','pause','resume','fullscreen','stop'].includes(m.control)) throw Error('Inactive player control.');
       return command({action:m.control});
     }).then(s=>reply({ok:true,state:s}),e=>reply({ok:false,error:e.message}));return true;
   }
@@ -158,7 +183,7 @@ chrome.tabs.onActivated.addListener(({tabId,windowId})=>{
   serial(async()=>{
     const s=await state();const index=s.tabIds.indexOf(tabId);
     if(windowId!==s.windowId||index<0||(!s.running&&!s.paused)||index===s.index)return;
-    const old=s.tabIds[s.index];s.index=index;s.remaining=s.seconds*1000;
+    const old=s.tabIds[s.index];s.index=index;s.seconds=await pageSeconds(s);s.remaining=s.seconds*1000;
     if(s.running)await schedule(s);else await save(s);
     await overlay({...s,running:false,paused:false},old);
     await overlay(s,tabId,true);

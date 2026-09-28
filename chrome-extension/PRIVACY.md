@@ -8,4 +8,8 @@ Optional website access lets the extension add a countdown bar, fade overlay, an
 
 Removing the extension removes its stored settings. Closing the display or pausing stops scheduled playback as described in the installation guide.
 
+Display tab identifiers are tracked in session storage so Stop & close signage can close displays launched in that browser session, including previous playlists. Stop preserves saved settings and does not close unrelated or setup/login-check tabs.
+
+Individual page durations are stored with the local playlist and setup drafts. Reset settings to defaults restores timing/display preferences and clears setup drafts, while retaining saved page URLs/names and Chrome site permissions.
+
 Publisher: add your support contact and host this policy at a public URL before store submission.

@@ -1,0 +1,25 @@
+const vm=require('node:vm'),fs=require('node:fs'),assert=require('node:assert/strict');
+const html=fs.readFileSync(__dirname+'/chrome-extension/options.html','utf8');
+const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);
+assert.equal(new Set(ids).size,ids.length,'Settings IDs must be unique');
+const nodes=Object.fromEntries(ids.map(id=>[id,{setAttribute(){}}])),events=[];let granted=false,approve=true;
+const prefs={urls:['https://example.com'],reloadMinutes:0,accent:'#005bdb',showTimer:true,transitions:true};
+const document={readyState:'complete',getElementById:id=>nodes[id]||null};
+const chrome={runtime:{sendMessage:async m=>{events.push(m.action);if(m.action==='settings')return {ok:true,state:prefs};if(m.action==='overlayAccess')return {ok:true,state:{origins:['https://example.com/*'],granted,missing:granted?[]:[{}]}};return {ok:true,state:{}};}},permissions:{request:async()=>{events.push('request');granted=approve;return approve;},remove:async()=>{events.push('remove');granted=false;return true;}}};
+vm.runInNewContext(fs.readFileSync(__dirname+'/chrome-extension/options.js','utf8'),{document,chrome});
+(async()=>{
+ await new Promise(r=>setImmediate(r));events.length=0;
+ nodes.access.checked=true;nodes.access.onchange();assert.equal(events.length,0);
+ await nodes.form.onsubmit({preventDefault(){}});assert.equal(events[0],'request');assert.ok(events.includes('saveSettings'));assert.equal(nodes.access.checked,true);
+ events.length=0;nodes.access.checked=false;nodes.access.onchange();assert.equal(events.length,0);
+ await nodes.form.onsubmit({preventDefault(){}});assert.ok(events.indexOf('saveSettings')<events.indexOf('remove'));assert.equal(nodes.access.checked,false);
+ events.length=0;approve=false;nodes.access.checked=true;nodes.access.onchange();await nodes.form.onsubmit({preventDefault(){}});
+ assert.deepEqual(events,['request']);assert.match(nodes.status.textContent,/not saved/);assert.equal(nodes.save.disabled,false);
+ const source=fs.readFileSync(__dirname+'/chrome-extension/options.js','utf8');
+ const oldReset=nodes.reset;delete nodes.reset;
+ assert.doesNotThrow(()=>vm.runInNewContext(source,{document,chrome}));assert.match(nodes.status.textContent,/out of date/);assert.equal(nodes.save.disabled,true);
+ nodes.reset=oldReset;let ready;
+ const loadingDocument={...document,readyState:'loading',addEventListener:(event,fn)=>{assert.equal(event,'DOMContentLoaded');ready=fn;}};
+ const before=events.length;vm.runInNewContext(source,{document:loadingDocument,chrome});assert.equal(events.length,before);assert.equal(typeof ready,'function');ready();await new Promise(r=>setImmediate(r));assert.equal(nodes.save.disabled,false);
+ console.log('PASS: staged checkbox edits, Save permission gesture, cleanup before revoke, denied access leaves settings unsaved');
+})().catch(e=>{console.error(e);process.exitCode=1;});
