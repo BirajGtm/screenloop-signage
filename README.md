@@ -62,6 +62,8 @@ No localhost server or dashboard API is needed. Use the Chrome profile where you
 
 ## Website publishing files
 
+- [chrome-web-store-submission.md](chrome-web-store-submission.md): copy-ready listing text, permission justifications, disclosure guidance, and reviewer instructions.
+
 - [project-info.md](project-info.md): project-page description with website frontmatter and screenshot references.
 - [privacy-policy.md](privacy-policy.md): standalone policy for website publishing, matching the [extension copy](chrome-extension/PRIVACY.md).
 - [images](images): five screenshots of the welcome popup, playback popup, setup, settings, and demo signage.

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add Chrome Web Store listing copy, permission justifications, local-data disclosures, and reviewer testing instructions.
+
 - Link the published project and privacy-policy pages and synchronize website publishing content and policy copies.
 
 - Add five project screenshots, website-ready project information, and a standalone privacy-policy Markdown file. Link screenshots and publishing assets from the documentation.
