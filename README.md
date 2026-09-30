@@ -40,6 +40,32 @@ After changing source files, reload the extension at `chrome://extensions`.
 
 No localhost server or dashboard API is needed. Use the Chrome profile where you sign in to your websites. Declining site access allows rotation without overlays on that site.
 
+## Screenshots
+
+### Signage playback
+
+![Demo signage with floating controls and the countdown bar](images/demo-screen-with-controls-and-sidebar.png)
+
+### Playlist setup
+
+![Manage pages and the empty playlist](images/setup-pages.png)
+
+### Settings
+
+![Appearance, refresh, and visual settings](images/all-settings.png)
+
+### Extension popup
+
+[Welcome screen](images/screenloop-extension-popup-no-page.png) · [Playback controls](images/screenloop-extension-popup-demo-running.png)
+
+## Website publishing files
+
+- [project-info.md](project-info.md): project-page description with website frontmatter and screenshot references.
+- [privacy-policy.md](privacy-policy.md): standalone policy for website publishing, matching the [extension copy](chrome-extension/PRIVACY.md).
+- [images](images): five screenshots of the welcome popup, playback popup, setup, settings, and demo signage.
+
+When copying the project page to a website, upload its images and replace relative image and privacy-policy links with the site's final paths. Keep both privacy-policy copies in sync when updating them. These website assets are outside the packaged extension folder.
+
 ## Logo assets
 
 The untouched full-size logo is [Logo Main.png](Logo%20Main.png) in the repository root. Packaged extension icons are generated from it at 16, 32, 48, and 128 pixels. On Windows, run `powershell -File build-icons.ps1` to regenerate them. The full-size original is not included in the extension folder.
@@ -59,6 +85,6 @@ node test-theme.cjs
 
 These test playback and setup logic using simulated Chrome APIs. They do not replace live browser acceptance testing.
 
-See [installation details](chrome-extension/INSTALL.md) and the [draft privacy policy](chrome-extension/PRIVACY.md). Chrome Web Store publication has not been completed. Screenshots, publisher contact details, and final review are still needed.
+See [installation details](chrome-extension/INSTALL.md) and the [privacy policy](chrome-extension/PRIVACY.md). Chrome Web Store publication has not been completed. Publisher: Biraj Gautam. Support: [support@birajgtm.com.np](mailto:support@birajgtm.com.np). Screenshots are included in images; final store-ready sizing, a public privacy-policy URL, submission disclosures, and live Chrome acceptance testing are still needed.
 
 The older local iframe player is excluded from this repository.

@@ -6,3 +6,5 @@ make-icons.ps1
 *.zip
 .env*
 node_modules/
+
+.DS_Store

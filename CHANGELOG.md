@@ -1,5 +1,11 @@
 # Release notes
 
+## Unreleased
+
+- Add five project screenshots, website-ready project information, and a standalone privacy-policy Markdown file. Link screenshots and publishing assets from the documentation.
+
+- Finalize the privacy policy with publisher Biraj Gautam and support@birajgtm.com.np, including local storage, permissions, interaction handling, and data-removal disclosures.
+
 ## 2.0.0 — 2026-09-29
 
 - Add System (default), Light, and Dark appearance across extension pages.
