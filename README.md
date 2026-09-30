@@ -1,20 +1,29 @@
 # ScreenLoop Signage
 
-Current version: **1.6.0**. See [release notes](CHANGELOG.md).
+Current version: **2.0.0**. See [release notes](CHANGELOG.md).
 
 A Chrome Manifest V3 extension that turns webpages into a rotating signage display using normal browser tabs and existing browser login sessions.
 
 ## Features
 
+- Compact numbered playlist rows with page details, duration fields, reorder actions, and site-access status.
+- System, Light, and Dark appearance for the popup, setup, and settings; System is the default.
 - Guided playlist setup with named pages, manual login confirmation, and locally saved drafts.
 - Collapsible Add a page form, a Back to settings shortcut, and a site-access checkbox in All settings.
 - All settings form edits, including the site-access checkbox, apply through Save settings below the controls and visuals section.
-- Contextual ? help explains settings and playback actions with mouse, keyboard, or touch.
+- Selective ? help explains page refresh, single-page bar behavior, and website URL requirements. Click or tap to open, then click elsewhere to dismiss; keyboard activation and Escape are supported. Reset effects appear in a small orange note below the reset button.
+- Popup uses confirmed background state and renders controls before site-access checks finish.
+- Starting signage or the demo opens fullscreen and briefly shows controls for five seconds. The pointer hides after three idle seconds in fullscreen and returns on mouse or keyboard activity. Automatic page switches keep an idle pointer hidden.
+- Countdown timing begins after tab activation and resynchronizes when a page becomes visible.
 - Timed rotation, optional page reloads, pause/resume, and fullscreen controls.
-- Custom per-page durations from 30 to 600 seconds (30 by default) and a confirmed reset of timing/display preferences without deleting saved pages.
+- A single inline timing note appears when any playlist page is below 30 seconds.
+- Custom per-page durations from 5 to 600 seconds (30 by default) and a confirmed reset of timing/display preferences without deleting saved pages.
 - Duration fields appear in Manage pages starting with the second page, never in the popup. Single-page playback shows a bouncing activity bar instead of a countdown, with Previous/Next disabled; optional reload still works.
 - Stop & close signage ends playback and closes display tabs launched during the current browser session, preserving unrelated tabs.
-- Optional countdown bar, accent color, transitions, and playback controls that hide when idle and reappear on pointer movement.
+- Popup permission recovery targets the current signage website after navigation.
+- Concise popup notices explain when website access is needed for controls.
+- Frosted-glass timer track adapts its contrast to keep dark and light accents visible.
+- Optional countdown bar, accent color, a gentle 450ms fade with subtle blur on page switches, and playback controls that hide when idle, reappear on pointer movement, and retain their remaining visible time across page switches.
 - Three bundled fictional demo pages.
 - Settings stored locally; no analytics or backend service.
 
@@ -45,6 +54,7 @@ node test-setup.cjs
 node test-playlist.cjs
 node test-overlay.cjs
 node test-options.cjs
+node test-theme.cjs
 ```
 
 These test playback and setup logic using simulated Chrome APIs. They do not replace live browser acceptance testing.

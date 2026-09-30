@@ -1,6 +1,6 @@
 # ScreenLoop Signage privacy
 
-ScreenLoop Signage stores your playlist URLs and page names, rotation and reload intervals, timer accent color, countdown visibility, and fade preference locally in Chrome's extension storage. Setup drafts, including unfinished page entry and confirmation progress, are also saved locally. Playback state (including playlist URLs, tab/window identifiers, and timing) and overlay injection errors are kept in session storage. It does not sync settings or send them to the developer. No analytics, advertising, or remote code is included.
+ScreenLoop Signage stores your playlist URLs and page names, rotation and reload intervals, timer accent color, countdown visibility, fade preference, and appearance choice locally in Chrome's extension storage. Setup drafts, including unfinished page entry and confirmation progress, are also saved locally. Playback state (including playlist URLs, tab/window identifiers, and timing) and overlay injection errors are kept in session storage. It does not sync settings or send them to the developer. No analytics, advertising, or remote code is included.
 
 The extension opens the websites you choose; those websites receive normal browser requests and apply their own privacy policies. Browser login sessions remain managed by Chrome and the websites. The extension does not read passwords, cookies, or dashboard content.
 
@@ -13,3 +13,5 @@ Display tab identifiers are tracked in session storage so Stop & close signage c
 Individual page durations are stored with the local playlist and setup drafts. Reset settings to defaults restores timing/display preferences and clears setup drafts, while retaining saved page URLs/names and Chrome site permissions.
 
 Publisher: add your support contact and host this policy at a public URL before store submission.
+
+The tabs permission technically permits reading tab URLs and titles. ScreenLoop uses it to identify the current managed signage tab’s destination after navigation and request optional site access there. It does not grant website-content access, which still requires host permission. Destination URLs are not sent to the developer.

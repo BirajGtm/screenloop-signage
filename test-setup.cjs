@@ -9,7 +9,7 @@ function launch(){
 }
 const settle=()=>new Promise(r=>setImmediate(r));
 (async()=>{
- let n=launch();await settle();assert.equal(n.save.disabled,true);
+ let n=launch();await settle();assert.equal(n.save.disabled,true);assert.equal(n['short-timing-note'].hidden,true);
  assert.equal(n.add.hidden,true);n['toggle-add'].onclick();assert.equal(n.add.hidden,false);n['cancel-add'].onclick();assert.equal(n.add.hidden,true);
  n.url.value='https://example.com/monitor';n.url.oninput();n.name.value='Operations';n.name.oninput();await settle();
  n=launch();await settle();assert.equal(n.url.value,'https://example.com/monitor');
@@ -28,8 +28,15 @@ const settle=()=>new Promise(r=>setImmediate(r));
  assert.equal(n.save.disabled,true);assert.equal(n.start.disabled,true);await n.start.onclick();assert.equal(saved.urls.length,1);
  n=launch();await settle();assert.equal(n.save.disabled,true);assert.equal(n.start.disabled,true);
  n.cancel.onclick();assert.equal(n.confirm.hidden,true);assert.equal(n.add.hidden,true);assert.equal(n.save.disabled,false);assert.equal(n.start.disabled,false);
- n['toggle-add'].onclick();n.url.value='https://example.com/second';n.seconds.value='31';await n.add.onsubmit({preventDefault(){}});await n.ready.onclick();
+ n['toggle-add'].onclick();n.url.value='https://example.com/second';n.seconds.value='5';await n.add.onsubmit({preventDefault(){}});await n.ready.onclick();
  assert.equal(n.pages.children[0].children[2].hidden,false);assert.equal(n.pages.children[1].children[2].hidden,false);
- await n.save.onclick();assert.equal(saved.durations[1],31);
+ await n.save.onclick();assert.equal(saved.durations[1],5);
+ assert.equal(n['short-timing-note'].hidden,false);
+ const duration=n.pages.children[1].children[2].children[0];
+ duration.value='29';duration.oninput();assert.equal(n['short-timing-note'].hidden,false);
+ duration.value='30';duration.onchange();assert.equal(n['short-timing-note'].hidden,true);
+ duration.value='5';duration.onchange();assert.equal(n['short-timing-note'].hidden,false);
+ n.pages.children[1].children[3].children[2].onclick();assert.equal(n['short-timing-note'].hidden,true);
+
  console.log('PASS: draft recovery, open/check step, readiness gate, named playlist saving');
 })().catch(e=>{console.error(e);process.exitCode=1});
