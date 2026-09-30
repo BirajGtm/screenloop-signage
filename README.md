@@ -58,13 +58,15 @@ No localhost server or dashboard API is needed. Use the Chrome profile where you
 
 [Welcome screen](images/screenloop-extension-popup-no-page.png) · [Playback controls](images/screenloop-extension-popup-demo-running.png)
 
+[Project website](https://birajgtm.com.np/project/screenloop-signage) · [Privacy policy](https://birajgtm.com.np/project/screenloop-signage/privacy-policy)
+
 ## Website publishing files
 
 - [project-info.md](project-info.md): project-page description with website frontmatter and screenshot references.
 - [privacy-policy.md](privacy-policy.md): standalone policy for website publishing, matching the [extension copy](chrome-extension/PRIVACY.md).
 - [images](images): five screenshots of the welcome popup, playback popup, setup, settings, and demo signage.
 
-When copying the project page to a website, upload its images and replace relative image and privacy-policy links with the site's final paths. Keep both privacy-policy copies in sync when updating them. These website assets are outside the packaged extension folder.
+The project information and privacy policy match the published website content. Keep both local privacy-policy copies identical and update the website copies manually when making future changes. Screenshot paths differ between GitHub and the website. These website assets are outside the packaged extension folder.
 
 ## Logo assets
 
@@ -85,6 +87,6 @@ node test-theme.cjs
 
 These test playback and setup logic using simulated Chrome APIs. They do not replace live browser acceptance testing.
 
-See [installation details](chrome-extension/INSTALL.md) and the [privacy policy](chrome-extension/PRIVACY.md). Chrome Web Store publication has not been completed. Publisher: Biraj Gautam. Support: [support@birajgtm.com.np](mailto:support@birajgtm.com.np). Screenshots are included in images; final store-ready sizing, a public privacy-policy URL, submission disclosures, and live Chrome acceptance testing are still needed.
+See [installation details](chrome-extension/INSTALL.md) and the [privacy policy](chrome-extension/PRIVACY.md). Chrome Web Store publication has not been completed. Publisher: Biraj Gautam. Support: [support@birajgtm.com.np](mailto:support@birajgtm.com.np). Screenshots are included in images; final store-ready sizing, submission disclosures, and live Chrome acceptance testing are still needed.
 
 The older local iframe player is excluded from this repository.

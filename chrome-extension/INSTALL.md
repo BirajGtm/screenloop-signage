@@ -85,8 +85,8 @@ Close old Settings and Manage pages tabs after an update and reopen them from th
 
 ## Publication status
 
-This is not a published Chrome Web Store release. Icons are bundled. Publisher: Biraj Gautam. Support: [support@birajgtm.com.np](mailto:support@birajgtm.com.np). Five screenshots are included in the repository’s [images folder](../images). Final store-ready image sizing, a publicly hosted privacy-policy URL, disclosures, and live Chrome acceptance testing are still needed before submission. See [PRIVACY.md](PRIVACY.md) for the privacy policy and the repository README for automated test commands.
+This is not a published Chrome Web Store release. Icons are bundled. Publisher: Biraj Gautam. Support: [support@birajgtm.com.np](mailto:support@birajgtm.com.np). Five screenshots are included in the repository’s [images folder](../images). Final store-ready image sizing, disclosures, and live Chrome acceptance testing are still needed before submission. See [PRIVACY.md](PRIVACY.md) for the privacy policy and the repository README for automated test commands.
 
 Chrome’s tabs permission identifies the current signage destination for permission recovery. Reload the extension after updating and approve the added permission if Chrome prompts. Restricted Chrome pages cannot show controls.
 
-For the project website, use [project-info.md](../project-info.md) and the standalone [privacy-policy.md](../privacy-policy.md). Upload the referenced images and update links to match the website’s routes. Keep the standalone policy synchronized with the extension’s policy.
+For the project website, use [project-info.md](../project-info.md) and the standalone [privacy-policy.md](../privacy-policy.md). The published [project page](https://birajgtm.com.np/project/screenloop-signage) and [privacy policy](https://birajgtm.com.np/project/screenloop-signage/privacy-policy) are hosted on Biraj Gautam’s website. Keep the standalone policy synchronized with the extension’s policy and update the website copy manually after documentation changes.

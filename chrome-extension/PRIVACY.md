@@ -54,4 +54,4 @@ Local settings and drafts remain until changed, cleared, or the extension is uni
 
 This policy may be updated to reflect changes to ScreenLoop Signage. The date above identifies the latest revision.
 
-For support or privacy questions, contact **Biraj Gautam** at [support@birajgtm.com.np](mailto:support@birajgtm.com.np).
+For support or privacy questions, contact at [support@birajgtm.com.np](mailto:support@birajgtm.com.np).

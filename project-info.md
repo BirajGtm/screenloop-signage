@@ -1,5 +1,8 @@
 ---
 title: "ScreenLoop Signage"
+slug: screenloop-signage
+repoUrl: "https://github.com/BirajGtm/screenloop-signage"
+heroImage: "images/demo-screen-with-controls-and-sidebar.png"
 description: "A Chrome extension that turns websites and dashboards into a fullscreen signage playlist, with flexible timing and local-only settings."
 stack: ["JavaScript", "HTML", "CSS", "Chrome Extensions API", "Manifest V3"]
 category: "Coding"
@@ -55,11 +58,12 @@ Version **2.0.0** is available on GitHub for manual installation. Chrome Web Sto
 
 [View source and installation details on GitHub](https://github.com/BirajGtm/screenloop-signage)
 
+[View the project website](https://birajgtm.com.np/project/screenloop-signage)
+
 ## Privacy and Support
 
 Developed by **Biraj Gautam**.
 
-<!-- When publishing, replace the relative link below with your website's final privacy-policy URL if its routing differs. -->
-[Read the Privacy Policy](./privacy-policy.md)
+[Read the Privacy Policy](https://birajgtm.com.np/project/screenloop-signage/privacy-policy)
 
 For questions or support, email [support@birajgtm.com.np](mailto:support@birajgtm.com.np).
