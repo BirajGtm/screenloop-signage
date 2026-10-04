@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Update the artifact upload action to its Node.js 24 version to remove the runner deprecation warning.
+
 - Add a manually triggered and version-tag-triggered GitHub workflow for tested Chrome Web Store ZIPs, plus a local packaging script.
 
 - Add Chrome Web Store listing copy, permission justifications, local-data disclosures, and reviewer testing instructions.
