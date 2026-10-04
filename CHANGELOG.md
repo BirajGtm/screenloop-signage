@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add a manually triggered and version-tag-triggered GitHub workflow for tested Chrome Web Store ZIPs, plus a local packaging script.
+
 - Add Chrome Web Store listing copy, permission justifications, local-data disclosures, and reviewer testing instructions.
 
 - Link the published project and privacy-policy pages and synchronize website publishing content and policy copies.

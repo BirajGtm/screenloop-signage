@@ -74,6 +74,14 @@ The project information and privacy policy match the published website content. 
 
 The untouched full-size logo is [Logo Main.png](Logo%20Main.png) in the repository root. Packaged extension icons are generated from it at 16, 32, 48, and 128 pixels. On Windows, run `powershell -File build-icons.ps1` to regenerate them. The full-size original is not included in the extension folder.
 
+## Build the store ZIP on GitHub
+
+Open **Actions → Build Chrome Web Store ZIP → Run workflow**, select **main**, and run it. Open the completed run and download **screenloop-store-package** under Artifacts. Extract that download once: the inner `screenloop-signage-VERSION.zip` is the file to upload to the Chrome Web Store. Do not upload the outer artifact ZIP.
+
+New version-tag pushes also trigger builds; the tag must match the manifest version (for example, `v2.0.1`). Existing tags do not trigger retroactively. Use the manual workflow on main for the current version. Artifacts are retained for 30 days and can be rebuilt. This workflow does not submit to the store or attach files to GitHub Releases.
+
+For the same package locally, run `python3 scripts/package-extension.py`; the ZIP is saved in `dist/`. It includes runtime files with `manifest.json` at the root and excludes documentation, hidden metadata, and old ZIPs. Increase the manifest version before packaging a new store update.
+
 ## Checks
 
 Run with Node.js:

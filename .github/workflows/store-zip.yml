@@ -1,0 +1,42 @@
+name: Build Chrome Web Store ZIP
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+permissions:
+  contents: read
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+      - name: Test extension
+        run: |
+          node test-controls.cjs
+          node test-setup.cjs
+          node test-playlist.cjs
+          node test-overlay.cjs
+          node test-options.cjs
+          node test-theme.cjs
+      - name: Build and validate ZIP
+        env:
+          REF_TYPE: ${{ github.ref_type }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          if [ "$REF_TYPE" = tag ]; then
+            python3 scripts/package-extension.py --tag "$REF_NAME"
+          else
+            python3 scripts/package-extension.py
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: screenloop-store-package
+          path: dist/screenloop-signage-*.zip
+          if-no-files-found: error
+          retention-days: 30

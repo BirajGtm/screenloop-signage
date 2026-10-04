@@ -90,3 +90,7 @@ This is not a published Chrome Web Store release. Icons are bundled. Publisher: 
 Chrome’s tabs permission identifies the current signage destination for permission recovery. Reload the extension after updating and approve the added permission if Chrome prompts. Restricted Chrome pages cannot show controls.
 
 For the project website, use [project-info.md](../project-info.md) and the standalone [privacy-policy.md](../privacy-policy.md). The published [project page](https://birajgtm.com.np/project/screenloop-signage) and [privacy policy](https://birajgtm.com.np/project/screenloop-signage/privacy-policy) are hosted on Biraj Gautam’s website. Keep the standalone policy synchronized with the extension’s policy and update the website copy manually after documentation changes.
+
+## Package on GitHub
+
+Use Actions → Build Chrome Web Store ZIP → Run workflow on main. After the tests pass, download screenloop-store-package from the run’s Artifacts section and extract it once. Upload the inner screenloop-signage-VERSION.zip to the store. New version tags also build automatically when the tag matches the manifest. This creates a package only; store submission remains manual.
